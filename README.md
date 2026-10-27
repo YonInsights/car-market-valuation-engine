@@ -17,7 +17,7 @@ In automotive retail, lending, and secondary acquisition, determining a vehicle'
 ### Core Business Questions Addressed:
 1. **Quantitative Price Driver Discovery:** Measure how horsepower, vehicle footprint, fuel efficiency (EPA Combined MPG), and origin influence vehicle MSRP and dealer invoice margins.
 2. **Performance-Efficiency Trade-off Analysis:** Quantify the trade-off frontier between engine power output and fuel economy across Asian, European, and American manufacturers.
-3. **Machine Learning Valuation Engine:** Develop and validate an end-to-end regression pipeline capable of predicting MSRP with over $92\%$ accuracy ($R^2$).
+3. **Machine Learning Valuation Engine:** Develop and validate an end-to-end regression pipeline capable of predicting MSRP with over 92% accuracy (R²).
 4. **Market Arbitrage & Anomaly Detection:** Compute **Valuation Discrepancy Gaps** to identify:
    - **Undervalued Vehicles (High Value Deals):** Cars whose actual MSRP is substantially below their mechanical and feature worth.
    - **Overvalued Vehicles (Brand Premiums):** Cars commanding significant retail markups attributable to badge equity or luxury positioning.
@@ -26,10 +26,12 @@ In automotive retail, lending, and secondary acquisition, determining a vehicle'
 
 ## 🔬 Domain-Informed Engineering Highlights
 
-* **Domain-Aware Rotary Engine Handling:** In the raw dataset, the **Mazda RX-8** lacked cylinder counts. Conventional automated imputation blindly fills this with the global mean ($\approx 5.8$ cylinders), ignoring mechanical reality. Because the Mazda RX-8 utilizes the **Wankel Renesis Rotary Engine** (which has 0 reciprocating pistons), domain-informed segment imputation was engineered to maintain mechanical fidelity.
-* **EPA Standard Fuel Economy Metric:** Engineered a weighted composite efficiency metric:
-  $$\text{Combined MPG} = 0.55 \times \text{MPG}_{\text{City}} + 0.45 \times \text{MPG}_{\text{Highway}}$$
-* **Power-to-Weight Dynamics:** Calculated acceleration potential indicators ($\frac{\text{Horsepower}}{\text{Curb Weight}}$) to capture sporty dynamics without leaking invoice costs into predictive models.
+* **Domain-Aware Rotary Engine Handling:** In the raw dataset, the **Mazda RX-8** lacked cylinder counts. Conventional automated imputation blindly fills this with the global mean (~5.8 cylinders), ignoring mechanical reality. Because the Mazda RX-8 utilizes the **Wankel Renesis Rotary Engine** (which has 0 reciprocating pistons), domain-informed segment imputation was engineered to maintain mechanical fidelity.
+* **EPA Standard Fuel Economy Metric:** Engineered a weighted composite efficiency metric based on official EPA guidelines:
+  ```text
+  Combined MPG = (0.55 × City MPG) + (0.45 × Highway MPG)
+  ```
+* **Power-to-Weight Dynamics:** Calculated acceleration potential indicators (`Horsepower / Curb Weight`) to capture sporty dynamics without leaking invoice costs into predictive models.
 * **Leakage-Free Scikit-Learn Pipelines:** Categorical features (`Make`, `Type`, `Origin`, `DriveTrain`, `Brand_Tier`) and numeric features are transformed within atomic `Pipeline` and `ColumnTransformer` boundaries to ensure zero data leakage across train/test splits.
 
 ---
@@ -40,16 +42,16 @@ In automotive retail, lending, and secondary acquisition, determining a vehicle'
 * **Total Vehicles Analyzed:** 428 verified production vehicles across 38 global automakers.
 * **Geographic Distribution:** Asia (36.9%, 158 models), USA (34.3%, 147 models), Europe (28.7%, 123 models).
 * **Segment Breakdown:** Sedan (61.2%), SUV (14.0%), Sports (11.4%), Wagon (7.0%), Truck (5.6%), Hybrid (0.7%).
-* **Pricing Dispersion:** Mean MSRP is **$\$32,775$** (median **$\$27,635$**), spanning from **$\$10,280$** (entry commuter) to **$\$192,465$** (ultra-high-performance sports car).
+* **Pricing Dispersion:** Mean MSRP is **$32,775** (median **$27,635**), spanning from **$10,280** (entry commuter) to **$192,465** (ultra-high-performance sports car).
 
 ### 2. Regional Positioning & Fuel Economy Trade-offs
-* **Asia:** Highest fleet fuel efficiency (average **24.7 Combined MPG**) with competitive pricing (average MSRP **$\$24,741$**), led by Toyota, Honda, and Nissan.
-* **Europe:** Heavily concentrated in the luxury/performance tier (average MSRP **$\$48,350$**; average **243 HP**), commanding high brand equity and dealer margins.
-* **USA:** Dominates large displacement engines (V8 trucks and SUVs) with balanced pricing (average MSRP **$\$28,265$**; average **218 HP**).
+* **Asia:** Highest fleet fuel efficiency (average **24.7 Combined MPG**) with competitive pricing (average MSRP **$24,741**), led by Toyota, Honda, and Nissan.
+* **Europe:** Heavily concentrated in the luxury/performance tier (average MSRP **$48,350**; average **243 HP**), commanding high brand equity and dealer margins.
+* **USA:** Dominates large displacement engines (V8 trucks and SUVs) with balanced pricing (average MSRP **$28,265**; average **218 HP**).
 
 ### 3. Dealership Profitability & Invoicing Spreads
-* **Average Gross Markup:** Dealerships earn an average margin of **$\$2,760$** (**8.42%**) between Invoice and MSRP.
-* **Segment Margin Spread:** European sports cars deliver the highest average gross profit per unit (**$\$4,250+$**), while Asian economy sedans operate on high-volume, lean-spread margins (7.8%).
+* **Average Gross Markup:** Dealerships earn an average margin of **$2,760** (**8.42%**) between Invoice and MSRP.
+* **Segment Margin Spread:** European sports cars deliver the highest average gross profit per unit (**$4,250+**), while Asian economy sedans operate on high-volume, lean-spread margins (7.8%).
 
 ---
 
@@ -57,13 +59,13 @@ In automotive retail, lending, and secondary acquisition, determining a vehicle'
 
 Three regression architectures were evaluated on an 80/20 train-test split across 428 production vehicles:
 
-| Model Architecture | $R^2$ Score | Mean Absolute Error (MAE) | Root Mean Squared Error (RMSE) | Mean Absolute % Error (MAPE) | Status |
+| Model Architecture | R² Score | Mean Absolute Error (MAE) | Root Mean Squared Error (RMSE) | Mean Absolute % Error (MAPE) | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Ridge Regression** (L2 Regularized Baseline) | `0.8594` | $\$5,300.44$ | $\$6,875.61$ | $16.73\%$ | Baseline |
-| **Random Forest Regressor** (Ensemble) | `0.9128` | $\$3,686.91$ | $\$5,415.03$ | $10.37\%$ | Candidate |
-| **Gradient Boosting Regressor** (Sequential Trees) | **`0.9286`** | **$\$3,278.23$** | **$\$4,899.09$** | **`9.68%`** | **🏆 Champion** |
+| **Ridge Regression** (L2 Regularized Baseline) | `0.8594` | $5,300.44 | $6,875.61 | 16.73% | Baseline |
+| **Random Forest Regressor** (Ensemble) | `0.9128` | $3,686.91 | $5,415.03 | 10.37% | Candidate |
+| **Gradient Boosting Regressor** (Sequential Trees) | **`0.9286`** | **$3,278.23** | **$4,899.09** | **`9.68%`** | **🏆 Champion** |
 
-> **Champion Performance:** The **Gradient Boosting Regressor** captured **$92.86\%$** of price variance, achieving an average absolute prediction error of **$\$3,278$** across vehicle classes ranging from $\$10,000$ to $\$192,000+$.
+> **Champion Performance:** The **Gradient Boosting Regressor** captured **92.86%** of price variance, achieving an average absolute prediction error of **$3,278** across vehicle classes ranging from $10,000 to $192,000+.
 
 ---
 
@@ -88,30 +90,32 @@ Feature attributions extracted from the champion Gradient Boosting model reveal 
 
 ## 💡 Market Valuation Discrepancy Findings
 
-Using the model's predictions as an intrinsic baseline, we calculate:
-$$\text{Valuation Gap} = \text{MSRP} - \text{Predicted MSRP}$$
+Using the model's predictions as an intrinsic baseline, we calculate the Valuation Gap:
+```text
+Valuation Gap = Actual MSRP - Predicted MSRP
+```
 
 ### Top 5 Undervalued Vehicles (Best Deals per Spec)
 These vehicles offer premium specifications, horsepower, and features substantially exceeding their retail price point:
 
 | Vehicle | Segment | Actual MSRP | Intrinsic Spec Value | Valuation Gap ($) | Discount (%) | Strategic Interpretation |
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Volvo S60 R 4dr** | Sedan | $\$37,560$ | $\$55,543$ | $-\$17,983$ | **-32.4%** | 300 HP AWD high-performance sport sedan priced like an entry sedan. |
-| **Cadillac CTS VVT 4dr** | Sedan | $\$30,835$ | $\$45,433$ | $-\$14,598$ | **-32.1%** | 255 HP luxury platform offering exceptional equipment per dollar. |
-| **Saturn Ion1 4dr** | Sedan | $\$10,995$ | $\$15,829$ | $-\$4,834$ | **-30.5%** | Ultra-affordable commuter delivering strong standard utility for price. |
-| **Ford Mustang 2dr (convertible)** | Sports | $\$18,345$ | $\$24,946$ | $-\$6,601$ | **-26.5%** | High horsepower-to-cost ratio for an open-top sport vehicle. |
-| **Audi A6 4.2 Quattro 4dr** | Sedan | $\$49,690$ | $\$64,509$ | $-\$14,819$ | **-23.0%** | V8 AWD executive sedan priced well below comparable European rivals. |
+| **Volvo S60 R 4dr** | Sedan | $37,560 | $55,543 | -$17,983 | **-32.4%** | 300 HP AWD high-performance sport sedan priced like an entry sedan. |
+| **Cadillac CTS VVT 4dr** | Sedan | $30,835 | $45,433 | -$14,598 | **-32.1%** | 255 HP luxury platform offering exceptional equipment per dollar. |
+| **Saturn Ion1 4dr** | Sedan | $10,995 | $15,829 | -$4,834 | **-30.5%** | Ultra-affordable commuter delivering strong standard utility for price. |
+| **Ford Mustang 2dr (convertible)** | Sports | $18,345 | $24,946 | -$6,601 | **-26.5%** | High horsepower-to-cost ratio for an open-top sport vehicle. |
+| **Audi A6 4.2 Quattro 4dr** | Sedan | $49,690 | $64,509 | -$14,819 | **-23.0%** | V8 AWD executive sedan priced well below comparable European rivals. |
 
 ### Top 5 Premium / Overvalued Vehicles (Highest Markups)
 These vehicles trade at significant retail markups above their raw mechanical and physical specifications:
 
 | Vehicle | Segment | Actual MSRP | Intrinsic Spec Value | Valuation Gap ($) | Premium (%) | Strategic Interpretation |
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Subaru Baja** | Truck | $\$24,520$ | $\$19,056$ | $+\$5,464$ | **+28.7%** | Niche unibody utility truck commanding unique novelty markup. |
-| **Saturn L300 2** | Wagon | $\$23,560$ | $\$18,435$ | $+\$5,125$ | **+27.8%** | Segment scarcity pricing on mid-size passenger wagon. |
-| **Volvo C70 LPT convertible** | Sedan | $\$40,565$ | $\$32,037$ | $+\$8,528$ | **+26.6%** | Convertible luxury body-style premium over mechanical specs. |
-| **Honda S2000 convertible** | Sports | $\$33,260$ | $\$27,190$ | $+\$6,070$ | **+22.3%** | High-RPM roadster enthusiast markup over basic 4-cylinder specs. |
-| **GMC Sonoma Crew Cab** | Truck | $\$25,395$ | $\$20,850$ | $+\$4,545$ | **+21.8%** | Compact crew cab utility premium. |
+| **Subaru Baja** | Truck | $24,520 | $19,056 | +$5,464 | **+28.7%** | Niche unibody utility truck commanding unique novelty markup. |
+| **Saturn L300 2** | Wagon | $23,560 | $18,435 | +$5,125 | **+27.8%** | Segment scarcity pricing on mid-size passenger wagon. |
+| **Volvo C70 LPT convertible** | Sedan | $40,565 | $32,037 | +$8,528 | **+26.6%** | Convertible luxury body-style premium over mechanical specs. |
+| **Honda S2000 convertible** | Sports | $33,260 | $27,190 | +$6,070 | **+22.3%** | High-RPM roadster enthusiast markup over basic 4-cylinder specs. |
+| **GMC Sonoma Crew Cab** | Truck | $25,395 | $20,850 | +$4,545 | **+21.8%** | Compact crew cab utility premium. |
 
 ---
 
@@ -156,7 +160,7 @@ car-market-valuation-engine/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YonInsights/Project-4.git car-market-valuation-engine
+git clone https://github.com/YonInsights/car-market-valuation-engine.git
 cd car-market-valuation-engine
 ```
 
@@ -246,7 +250,7 @@ print(f"Estimated Fair Market MSRP: ${predicted_price:,.2f}")
 ## 👤 Author & Portfolio
 
 * **Portfolio:** [Yonatan Insights](https://github.com/YonInsights)
-* **GitHub Repository:** [car-market-valuation-engine](https://github.com/YonInsights/Project-4)
+* **GitHub Repository:** [car-market-valuation-engine](https://github.com/YonInsights/car-market-valuation-engine)
 * **Contact:** Open an issue or connect on LinkedIn.
 
 ---
